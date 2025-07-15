@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Malla Curricular Interactiva</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .semestre {
+      background: #fff;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .semestre h2 {
+      margin-top: 0;
+      text-align: center;
+      font-size: 1.2em;
+    }
+    .ramo {
+      cursor: pointer;
+      background: #a7e6b0; /* verde claro */
+      margin: 5px 0;
+      padding: 8px;
+      text-align: center;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+    .ramo.aprobado {
+      background: #4caf50;
+      color: #fff;
+      text-decoration: line-through;
+    }
+    .ramo.bloqueado {
+      background: #ccc;
+      color: #666;
+      cursor: not-allowed;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Malla Curricular Interactiva</h1>
+  <div class="grid" id="malla"></div>
+
+  <script>
+    const malla = [
+      // PRIMER AÑO
+      {
+        semestre: "Primer Año - I Semestre",
+        ramos: [
+          { id: "tecnicas_comunicacion", nombre: "TÉCNICAS DE COMUNICACIÓN", prereqs: [] },
+          { id: "biologia_general", nombre: "BIOLOGÍA GENERAL", prereqs: [] },
+          { id: "bases_agronomia", nombre: "BASES DE LA AGRONOMÍA", prereqs: [] },
+          { id: "quimica_general", nombre: "QUIMICA GENERAL", prereqs: [] },
+          { id: "matematica1", nombre: "MATEMATICA I", prereqs: [] }
+        ]
+      },
+      {
+        semestre: "Primer Año - II Semestre",
+        ramos: [
+          { id: "complementaria1", nombre: "COMPLEMENTARIA 1", prereqs: [] },
+          { id: "tic", nombre: "MANEJO DE TECNOLOGÍAS DE INFORMACIÓN Y COMUNICACIÓN", prereqs: ["tecnicas_comunicacion"] },
+          { id: "anatomia_vegetal", nombre: "ANATOMÍA VEGETAL (AGRONOMÍA)", prereqs: ["biologia_general"] },
+          { id: "quimica_analitica", nombre: "ELEMENTOS DE QUÍMICA ANALÍTICA CUANTITATIVA", prereqs: ["quimica_general"] },
+          { id: "quimica_organica", nombre: "QUIMICA ORGÁNICA", prereqs: ["quimica_general"] },
+          { id: "matematica2", nombre: "MATEMATICA II", prereqs: ["matematica1"] },
+          { id: "fisica_general", nombre: "FISICA GENERAL", prereqs: ["matematica1"] }
+        ]
+      },
+      // SEGUNDO AÑO
+      {
+        semestre: "Segundo Año - III Semestre",
+        ramos: [
+          { id: "calculo", nombre: "CÁLCULO", prereqs: ["matematica2"] },
+          { id: "bioquimica", nombre: "BIOQUÍMICA", prereqs: ["quimica_organica", "biologia_general"] },
+          { id: "botanica_sistematica", nombre: "BOTÁNICA SISTEMÁTICA", prereqs: ["anatomia_vegetal"] },
+          { id: "microbiologia", nombre: "MICROBIOLOGÍA", prereqs: ["quimica_organica", "biologia_general"] },
+          { id: "biofisica_agricola", nombre: "BIOFÍSICA AGRÍCOLA", prereqs: ["matematica2", "fisica_general"] },
+          { id: "complementaria2", nombre: "COMPLEMENTARIA 2", prereqs: [] },
+          { id: "complementaria3", nombre: "COMPLEMENTARIA 3", prereqs: [] }
+        ]
+      },
+      {
+        semestre: "Segundo Año - IV Semestre",
+        ramos: [
+          { id: "modelacion_cartografica", nombre: "MODELACIÓN CARTOGRÁFICA", prereqs: ["calculo", "fisica_general"] },
+          { id: "fisiologia_vegetal", nombre: "FISIOLOGÍA VEGETAL", prereqs: ["bioquimica", "quimica_analitica"] },
+          { id: "genetica_general", nombre: "GENÉTICA GENERAL", prereqs: ["bioquimica", "anatomia_vegetal"] },
+          { id: "edafologia", nombre: "EDAFOLOGÍA", prereqs: ["biofisica_agricola"] },
+          { id: "taller_integrado1", nombre: "TALLER INTEGRADO I", prereqs: ["bioquimica", "biofisica_agricola", "botanica_sistematica"] },
+          { id: "anatomia_fisiologia_animal", nombre: "ANATOMÍA Y FISIOLOGÍA ANIMAL", prereqs: ["bioquimica", "microbiologia"] },
+          { id: "bioestadistica", nombre: "BIOESTADÍSTICA", prereqs: [] },
+          { id: "complementaria4", nombre: "COMPLEMENTARIA 4", prereqs: [] }
+        ]
+      },
+      // TERCER AÑO
+      {
+        semestre: "Tercer Año - V Semestre",
+        ramos: [
+          { id: "fertilidad_suelos", nombre: "FERTILIDAD DE SUELOS", prereqs: ["edafologia"] },
+          { id: "economia_general", nombre: "ECONOMÍA GENERAL AG", prereqs: ["calculo"] },
+          { id: "agroecologia", nombre: "AGROECOLOGÍA", prereqs: ["fisiologia_vegetal"] },
+          { id: "fitopatologia_general", nombre: "FITOPATOLOGÍA GENERAL", prereqs: ["fisiologia_vegetal", "microbiologia"] },
+          { id: "produccion_animal", nombre: "PRODUCCIÓN ANIMAL", prereqs: ["anatomia_fisiologia_animal"] },
+          { id: "mecanizacion_agricola", nombre: "MECANIZACIÓN AGRÍCOLA", prereqs: ["edafologia", "fisica_general"] },
+          { id: "practica_profesional1", nombre: "PRÁCTICA PROFESIONAL I", prereqs: ["taller_integrado1"] },
+          { id: "ingles_basico1", nombre: "INGLÉS COMUNICATIVO BÁSICO I", prereqs: [] }
+        ]
+      },
+      {
+        semestre: "Tercer Año - VI Semestre",
+        ramos: [
+          { id: "entomologia", nombre: "ENTOMOLOGÍA", prereqs: ["agroecologia"] },
+          { id: "malherbologia", nombre: "MALHERBOLOGÍA", prereqs: ["fisiologia_vegetal", "botanica_sistematica"] },
+          { id: "cultivos_primavera", nombre: "CULTIVOS DE PRIMAVERA", prereqs: ["agroecologia", "genetica_general"] },
+          { id: "alimentacion_animal", nombre: "ALIMENTACIÓN ANIMAL", prereqs: ["produccion_animal"] },
+          { id: "conservacion_suelos", nombre: "CONSERVACIÓN DE SUELOS Y RECURSOS NATURALES", prereqs: ["fertilidad_suelos"] },
+          { id: "mercadeo", nombre: "MERCADEO", prereqs: ["economia_general"] },
+          { id: "ingles_basico2", nombre: "INGLÉS COMUNICATIVO BÁSICO II", prereqs: ["ingles_basico1"] }
+        ]
+      },
+      // CUARTO AÑO
+      {
+        semestre: "Cuarto Año - VII Semestre",
+        ramos: [
+          { id: "metodologia_investigacion", nombre: "METODOLOGÍA INVESTIGACIÓN", prereqs: ["bioestadistica"] },
+          { id: "taller_integrado2", nombre: "TALLER INTEGRADO II", prereqs: ["conservacion_suelos", "alimentacion_animal", "cultivos_primavera"] },
+          { id: "forrajeras", nombre: "FORRAJERAS", prereqs: ["fertilidad_suelos", "alimentacion_animal"] },
+          { id: "cultivos_otono", nombre: "CULTIVOS DE OTOÑO", prereqs: ["genetica_general", "agroecologia"] },
+          { id: "formulacion_proyectos", nombre: "FORMULACIÓN Y EVALUACIÓN DE PROYECTOS", prereqs: ["mercadeo"] },
+          { id: "fruticultura_general", nombre: "FRUTICULTURA GENERAL", prereqs: ["fertilidad_suelos", "agroecologia"] },
+          { id: "fundamentos_riego", nombre: "FUNDAMENTOS DE RIEGO", prereqs: ["cultivos_primavera", "edafologia"] },
+          { id: "practica_profesional2", nombre: "PRÁCTICA PROFESIONAL II", prereqs: ["practica_profesional1"] },
+          { id: "ingles_basico3", nombre: "INGLÉS COMUNICATIVO BÁSICO III", prereqs: ["ingles_basico2"] }
+        ]
+      },
+      {
+        semestre: "Cuarto Año - VIII Semestre",
+        ramos: [
+          { id: "manejo_praderas", nombre: "MANEJO DE PRADERAS", prereqs: ["forrajeras", "malherbologia"] },
+          { id: "horticultura", nombre: "HORTICULTURA", prereqs: ["agroecologia", "malherbologia"] },
+          { id: "diseno_experimentos", nombre: "DISEÑO Y ANÁLISIS DE EXPERIMENTOS", prereqs: ["metodologia_investigacion"] },
+          { id: "frutales_hoja_caduca", nombre: "FRUTALES DE HOJA CADUCA", prereqs: ["fruticultura_general"] },
+          { id: "metodos_riego", nombre: "MÉTODOS DE RIEGO", prereqs: ["fundamentos_riego", "mecanizacion_agricola"] },
+          { id: "gestion_empresas", nombre: "GESTIÓN DE EMPRESAS AGROPECUARIAS", prereqs: ["taller_integrado2", "formulacion_proyectos"] },
+          { id: "ingles_basico4", nombre: "INGLÉS COMUNICATIVO BÁSICO IV", prereqs: ["ingles_basico3"] },
+          { id: "complementaria5", nombre: "COMPLEMENTARIA 5", prereqs: [] }
+        ]
+      },
+      // QUINTO AÑO
+      {
+        semestre: "Quinto Año - IX Semestre",
+        ramos: [
+          { id: "vitivinicultura", nombre: "VITIVINICULTURA", prereqs: ["fruticultura_general"] },
+          { id: "postcosecha", nombre: "POST-COSECHA Y AGROINDUSTRIA", prereqs: ["horticultura", "frutales_hoja_caduca", "gestion_empresas"] },
+          { id: "desarrollo_rural", nombre: "DESARROLLO RURAL", prereqs: ["gestion_empresas"] },
+          { id: "memoria1", nombre: "MEMORIA I", prereqs: ["diseno_experimentos"] },
+          { id: "practica_profesional3", nombre: "PRÁCTICA PROFESIONAL III", prereqs: ["practica_profesional2"] },
+          { id: "gira_sur", nombre: "GIRA SISTEMAS PRODUCTIVOS DE LA ZONA SUR", prereqs: ["taller_integrado2", "manejo_praderas"] },
+          { id: "electiva1", nombre: "ELECTIVA 1", prereqs: [] },
+          { id: "electiva2", nombre: "ELECTIVA 2", prereqs: [] }
+        ]
+      },
+      {
+        semestre: "Quinto Año - X Semestre",
+        ramos: [
+          { id: "gira_norte", nombre: "GIRA SISTEMAS PRODUCTIVOS DE LA ZONA NORTE", prereqs: ["vitivinicultura", "postcosecha"] },
+          { id: "memoria2", nombre: "MEMORIA II", prereqs: ["memoria1"] },
+          { id: "electiva3", nombre: "ELECTIVA 3", prereqs: [] },
+          { id: "electiva4", nombre: "ELECTIVA 4", prereqs: [] },
+          { id: "electiva5", nombre: "ELECTIVA 5", prereqs: [] },
+          { id: "examen_titulo", nombre: "EXAMEN DE TÍTULO", prereqs: ["memoria2"] }
+        ]
+      }
+    ];
+
+    let estado = JSON.parse(localStorage.getItem("estadoMalla")) || {};
+
+    function crearMalla() {
+      const contenedor = document.getElementById("malla");
+      contenedor.innerHTML = "";
+
+      malla.forEach(sem => {
+        const semDiv = document.createElement("div");
+        semDiv.className = "semestre";
+
+        const titulo = document.createElement("h2");
+        titulo.textContent = sem.semestre;
+        semDiv.appendChild(titulo);
+
+        sem.ramos.forEach(ramo => {
+          const div = document.createElement("div");
+          div.className = "ramo";
+          div.id = ramo.id;
+          div.textContent = ramo.nombre;
+
+          let bloqueado = ramo.prereqs.some(pr => !estado[pr]);
+
+          if (bloqueado) {
+            div.classList.add("bloqueado");
+          } else if (estado[ramo.id]) {
+            div.classList.add("aprobado");
+          }
+
+          div.addEventListener("click", () => {
+            if (div.classList.contains("bloqueado")) {
+              alert("Este ramo está bloqueado por prerrequisitos.");
+              return;
+            }
+            div.classList.toggle("aprobado");
+            estado[ramo.id] = div.classList.contains("aprobado");
+            localStorage.setItem("estadoMalla", JSON.stringify(estado));
+            crearMalla();
+          });
+
+          semDiv.appendChild(div);
+        });
+
+        contenedor.appendChild(semDiv);
+      });
+    }
+
+    crearMalla();
+  </script>
+</body>
+</html>
